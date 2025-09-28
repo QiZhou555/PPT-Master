@@ -1,0 +1,6 @@
+flask
+python-pptx
+requests
+openai
+reportlab
+flask-cors
