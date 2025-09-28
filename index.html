@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PPT大师</title>
+    <style>
+        /* 莫兰迪色系定义 */
+        :root {
+            --primary-color: #8b9dc3;      /* 浅蓝灰色 */
+            --secondary-color: #d6c5a9;    /* 米色 */
+            --accent-color: #c39a8b;       /* 淡粉色 */
+            --success-color: #9db6a6;      /* 浅绿色 */
+            --warning-color: #d6a9a9;      /* 淡红色 */
+            --background-color: #f8f7f2;   /* 浅米色背景 */
+            --card-color: #ffffff;         /* 卡片背景色 */
+            --text-color: #4a4a4a;         /* 主文本色 */
+            --light-text: #7a7a7a;         /* 次要文本色 */
+            --border-color: #e0e0e0;       /* 边框色 */
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* 阴影 */
+            --transition: all 0.3s ease;   /* 过渡动画 */
+        }
+
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* 容器样式 */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* 头部样式 */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            color: var(--light-text);
+            font-size: 1.1rem;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        /* 输入区域样式 */
+        .input-section {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(139, 157, 195, 0.1);
+        }
+
+        /* 主题选择器样式 */
+        .theme-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .theme-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 3px solid transparent;
+        }
+
+        .theme-option:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-option.selected {
+            border-color: var(--text-color);
+            box-shadow: 0 0 0 2px var(--card-color);
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 14px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: #7a8bb6;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 157, 195, 0.3);
+        }
+
+        .btn:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* 旋转加载动画 */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 预览区域样式 */
+        .preview-container {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .preview-container h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        /* 内容预览样式 */
+        .content-preview {
+            background-color: var(--card-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .content-preview h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        /* PPT预览样式 */
+        .ppt-preview {
+            width: 100%;
+            min-height: 400px;
+            background-color: rgba(248, 247, 242, 0.5);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        /* 幻灯片预览样式 */
+        .slide-preview {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .slide-preview:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .slide-title {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .slide-subtitle {
+            color: var(--light-text);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .slide-content {
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        /* 导航按钮样式 */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background-color: var(--card-color);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 幻灯片指示器样式 */
+        .slide-indicator {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--light-text);
+            font-size: 14px;
+        }
+
+        /* 下载按钮样式 */
+        .download-btn {
+            display: inline-block;
+            padding: 14px 40px;
+            background-color: var(--success-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+
+        .download-btn:hover {
+            background-color: #8da494;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(157, 182, 166, 0.3);
+        }
+
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            max-width: 350px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            background-color: var(--card-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            color: var(--text-color);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .notification.success {
+            background-color: rgba(157, 182, 166, 0.1);
+            border-left: 4px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .notification.warning {
+            background-color: rgba(214, 169, 169, 0.1);
+            border-left: 4px solid var(--warning-color);
+            color: var(--warning-color);
+        }
+
+        .notification.info {
+            background-color: rgba(139, 157, 195, 0.1);
+            border-left: 4px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* 模态框样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-header h3 {
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--light-text);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .close-button:hover {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-body h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .modal-body .subtitle {
+            color: var(--light-text);
+            margin-bottom: 20px;
+        }
+
+        .modal-body .content {
+            color: var(--text-color);
+            line-height: 1.7;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            .card,
+            .preview-container,
+            .content-preview {
+                padding: 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .btn,
+            .download-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .theme-option {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PPT大师</h1>
+            <p>智能生成精美PPT，一键下载使用</p>
+        </header>
+
+        <div class="card">
+            <div class="input-section">
+                <label for="title-input">PPT主题</label>
+                <input type="text" id="title-input" placeholder="请输入PPT主题，例如：人工智能应用、项目进度报告等">
+            </div>
+
+            <div class="input-section">
+                <label for="style-select">PPT风格</label>
+                <select id="style-select">
+                    <option value="business">商务风格</option>
+                    <option value="creative">创意设计</option>
+                    <option value="academic">学术报告</option>
+                    <option value="ai">AI技术</option>
+                    <option value="project">项目规划</option>
+                    <option value="marketing">市场营销</option>
+                </select>
+            </div>
+
+            <div class="input-section">
+                <label for="length-select">PPT长度</label>
+                <select id="length-select">
+                    <option value="short">简短 (5-7页)</option>
+                    <option value="medium" selected>适中 (8-12页)</option>
+                    <option value="long">详细 (13-18页)</option>
+                </select>
+            </div>
+
+            <div class="input-section">
+                <label for="theme-color">主题颜色</label>
+                <select id="theme-color">
+                    <option value="蓝色">蓝色系</option>
+                    <option value="绿色">绿色系</option>
+                    <option value="橙色">橙色系</option>
+                    <option value="紫色">紫色系</option>
+                    <option value="红色">红色系</option>
+                </select>
+            </div>
+
+            <button id="generate-ppt-button" class="btn">
+                生成PPT
+            </button>
+        </div>
+
+        <!-- 内容预览区域 -->
+        <div id="content-preview" class="content-preview" style="display: none;">
+            <h3>PPT内容预览</h3>
+        </div>
+
+        <!-- PPT预览区域 -->
+        <div id="ppt-preview-container" class="preview-container" style="display: none;">
+            <h3>PPT预览</h3>
+            <div id="ppt-slides-preview" class="ppt-preview"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prev-slide">上一页</button>
+                <button class="nav-btn" id="next-slide">下一页</button>
+            </div>
+        </div>
+
+        <!-- 下载链接区域 -->
+        <div id="download-container" style="display: none; text-align: center; margin: 30px 0;">
+            <h3 style="color: var(--success-color);">PPT生成成功！</h3>
+            <p>点击下方按钮下载您的PPT文件</p>
+            <a href="" id="download-link" class="download-btn" download>下载PPT文件</a>
+        </div>
+    </div>
+
+    <!-- 通知元素 -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        console.log('PPT生成页面已加载');
+        
+        // 确保DOM完全加载后再绑定事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM已完全加载');
+            
+            // 检查按钮元素是否正确加载
+            const generateButton = document.getElementById('generate-ppt-button');
+            console.log('生成按钮元素:', generateButton);
+            
+            if (generateButton) {
+                console.log('开始绑定事件监听器');
+                // 重新绑定事件监听器
+                generateButton.addEventListener('click', async function() {
+                    console.log('生成按钮被点击');
+                    
+                    const title = document.getElementById('title-input').value.trim();
+                    const styleSelect = document.getElementById('style-select');
+                    const style = styleSelect.options[styleSelect.selectedIndex].value;
+                    const lengthSelect = document.getElementById('length-select');
+                    const length = lengthSelect.options[lengthSelect.selectedIndex].value;
+                    const themeColorSelect = document.getElementById('theme-color');
+                    const themeColor = themeColorSelect.options[themeColorSelect.selectedIndex].value;
+
+                    console.log('获取用户输入:', { title, style, length, themeColor });
+
+                    if (!title) {
+                        console.log('标题为空，显示警告');
+                        showNotification('请输入PPT标题', 'warning');
+                        return;
+                    }
+
+                    // 显示加载状态
+                    console.log('设置按钮为禁用状态，显示加载中...');
+                    this.disabled = true;
+                    this.innerHTML = '<span class="spinner"></span> 生成中...';
+                    showNotification('正在生成PPT内容，请稍候...', 'info');
+
+                    try {
+                        // 首先生成PPT内容
+                        console.log('发送请求到/generate_content', { topic: title, style, length });
+                        const contentResponse = await fetch('http://127.0.0.1:5001/generate_content', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ topic: title, style, length }),
+                        });
+
+                        console.log('收到响应', { status: contentResponse.status, ok: contentResponse.ok });
+                        
+                        if (!contentResponse.ok) {
+                            const errorData = await contentResponse.json().catch(() => ({
+                                error: `请求失败: ${contentResponse.status} ${contentResponse.statusText}`
+                            }));
+                            throw new Error(errorData.error || `请求失败: ${contentResponse.status}`);
+                        }
+                        
+                        const contentData = await contentResponse.json();
+                        console.log('解析响应数据成功', contentData);
+                        
+                        if (contentData.error) {
+                            throw new Error(contentData.error);
+                        }
+
+                        // 显示生成的内容
+                        const formattedContent = formatContent(contentData.content);
+                        displayContentPreview(formattedContent);
+                        showNotification('PPT内容生成成功', 'success');
+
+                        // 创建PPT文件
+                        showNotification('正在生成PPT文件，请稍候...', 'info');
+                        const pptResponse = await fetch('http://127.0.0.1:5001/create_ppt', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                content: contentData.content,
+                                theme_color: themeColor
+                            }),
+                        });
+
+                        const pptData = await pptResponse.json();
+
+                        if (pptData.error) {
+                            throw new Error(pptData.error);
+                        }
+
+                        // 显示下载链接和预览
+                        const downloadLink = document.getElementById('download-link');
+                        downloadLink.href = pptData.file_url || `http://127.0.0.1:5001/download/${pptData.ppt_path}`;
+                        downloadLink.download = pptData.ppt_path || 'generated_ppt.pptx';
+                        document.getElementById('download-container').style.display = 'block';
+                        // 显示PPT预览
+                        if (pptData.slides) {
+                            renderPPTPreview(pptData.slides);
+                            document.getElementById('ppt-preview-container').style.display = 'block';
+                        }
+
+                        showNotification('PPT生成成功，点击下载按钮获取文件', 'success');
+                    } catch (error) {
+                        console.error('生成PPT时出错:', error);
+                        showNotification(`生成失败: ${error.message}`, 'error');
+                    } finally {
+                        // 恢复按钮状态
+                        console.log('恢复按钮状态');
+                        this.disabled = false;
+                        this.innerHTML = '生成PPT';
+                    }
+                });
+            } else {
+                console.error('找不到生成按钮元素');
+            }
+        });
+        // 显示通知函数
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            
+            // 显示通知
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // 格式化PPT内容
+        function formatContent(content) {
+            let formatted = `<h3>${content?.title || '无标题'}</h3>`;
+            
+            if (content?.subtitle) {
+                formatted += `<p>${content.subtitle}</p>`;
+            }
+            
+            formatted += '<h4>章节：</h4><ul>';
+            
+            // 检查sections是否存在且为数组
+            if (Array.isArray(content?.sections)) {
+                for (let section of content.sections) {
+                    if (section) {
+                        formatted += `<li><strong>${section.title || '无标题'}</strong></li>`;
+                        if (section.content && Array.isArray(section.content)) {
+                            formatted += '<ul>';
+                            for (let point of section.content) {
+                                formatted += `<li>${point}</li>`;
+                            }
+                            formatted += '</ul>';
+                        }
+                        if (section.detail) {
+                            formatted += `<p>${section.detail}</p>`;
+                        }
+                    }
+                }
+            } else {
+                formatted += '<li>暂无章节内容</li>';
+            }
+            
+            formatted += '</ul>';
+            return formatted;
+        }
+
+        // 显示内容预览
+        function displayContentPreview(content) {
+            const previewContainer = document.getElementById('content-preview');
+            previewContainer.innerHTML = content;
+            previewContainer.style.display = 'block';
+            previewContainer.scrollTop = 0;
+        }
+
+        // 渲染PPT预览
+        function renderPPTPreview(slides) {
+            const previewContainer = document.getElementById('ppt-slides-preview');
+            previewContainer.innerHTML = '';
+            
+            // 安全检查：确保slides是数组
+            if (Array.isArray(slides) && slides.length > 0) {
+                slides.forEach((slide, index) => {
+                    if (slide) {
+                        const slideElement = document.createElement('div');
+                        slideElement.className = 'slide-preview';
+                        slideElement.dataset.index = index;
+                        
+                        let slideContent = `<div class="slide-number">${index + 1}</div>`;
+                        slideContent += `<h3 class="slide-title">${slide.title || '无标题'}</h3>`;
+                        
+                        if (slide.subtitle) {
+                            slideContent += `<p class="slide-subtitle">${slide.subtitle}</p>`;
+                        }
+                        
+                        if (slide.content) {
+                            // 将内容按行分割，每行作为一个段落
+                            const contentLines = slide.content.split('\n');
+                            slideContent += '<div class="slide-content">';
+                            contentLines.forEach(line => {
+                                if (line.trim()) {
+                                    slideContent += `<p>${line.trim()}</p>`;
+                                }
+                            });
+                            slideContent += '</div>';
+                        }
+                        
+                        slideElement.innerHTML = slideContent;
+                        previewContainer.appendChild(slideElement);
+                    }
+                });
+                
+                // 添加点击事件以预览单个幻灯片
+                document.querySelectorAll('.slide-preview').forEach(slide => {
+                    slide.addEventListener('click', function() {
+                        const index = parseInt(this.dataset.index);
+                        showSlideDetail(slides[index], index);
+                    });
+                });
+            } else {
+                // 如果没有幻灯片数据，显示提示信息
+                previewContainer.innerHTML = '<p style="text-align: center; color: var(--light-text); padding: 40px;">暂无幻灯片预览数据</p>';
+            }
+        }
+
+        // 显示幻灯片详情
+        function showSlideDetail(slide, index) {
+            // 安全检查：确保slide存在
+            if (!slide) {
+                showNotification('幻灯片数据不完整', 'error');
+                return;
+            }
+            
+            const detailModal = document.createElement('div');
+            detailModal.className = 'modal-overlay';
+            
+            // 安全构建模态框内容
+            const title = slide.title || '无标题';
+            const subtitleHtml = slide.subtitle ? `<p class="subtitle">${slide.subtitle}</p>` : '';
+            let contentHtml = '';
+            if (slide.content) {
+                // 安全处理内容，确保可以分割和映射
+                const contentLines = String(slide.content).split('\n');
+                contentHtml = `<div class="content">${contentLines.map(line => `<p>${line}</p>`).join('')}</div>`;
+            }
+            
+            detailModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>幻灯片 ${index + 1}</h3>
+                        <button class="close-button">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <h2>${title}</h2>
+                        ${subtitleHtml}
+                        ${contentHtml}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(detailModal);
+            
+            detailModal.querySelector('.close-button').addEventListener('click', function() {
+                document.body.removeChild(detailModal);
+            });
+            
+            // 点击遮罩层也可关闭
+            detailModal.addEventListener('click', function(e) {
+                if (e.target === detailModal) {
+                    document.body.removeChild(detailModal);
+                }
+            });
+        }
+        
+        // 左右滑动切换预览
+        let currentSlideIndex = 0;
+        
+        document.getElementById('prev-slide').addEventListener('click', function() {
+            const slides = document.querySelectorAll('.slide-preview');
+            if (slides.length > 0) {
+                currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+                slides[currentSlideIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+        
+        document.getElementById('next-slide').addEventListener('click', function() {
+            const slides = document.querySelectorAll('.slide-preview');
+            if (slides.length > 0) {
+                currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+                slides[currentSlideIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    </script>
+</body>
+</html>
